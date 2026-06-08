@@ -1,0 +1,24 @@
+
+#   Example: A forbidden transitions in Si-like 3s(2)3p(2) in LS
+#            assuming the LSJ calculation has been performed
+
+# 5.  Generate eigenvectors of the Breit-Pauli Hamiltonian
+#     This requires that the cfg.inp for the last n of each group
+#     be redefined as a CI.c with the intermediate *'s and
+#     the two header lines  removed.
+#     .. we assume this will be done MANUALLY
+
+cd e1
+#     For an isoelectronnic sequence it is convenient to compute
+#     and store angular data (which uses more disk the bpci.  This
+#     means the calulation is done in three steps.
+#         5.1 Generate angular data
+#	  5.2 For each Z
+#	        5.2.1  Generate the matrix
+#               5.2.2  Generate the eigenvalues
+
+          ../sh_bp
+cd ..
+
+#  6.  Compute the transitions in LSJ
+         ./sh_tr_lsj     

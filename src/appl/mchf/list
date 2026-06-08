@@ -1,0 +1,17 @@
+
+
+132a133
+>         pcoeff = 0;  ! code to make all c.lst on disk
+
+
+80c80,81
+< !      qhmx = 0  ! DBG code
+---
+>        qhmx = 0  ! DBG code    ! this version uses only disk
+>                               ! comment the expression to make it dynamic
+109c110
+< !      pico = 0 ! DBG code
+---
+>       pico = 0 ! DBG code
+132a134
+>          pcoeff = 0; ! use disk for c.lst

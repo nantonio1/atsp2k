@@ -1,0 +1,134 @@
+DENSITY
+
+A program to calculate electron densities from correlated 
+wavefunctions obtained from the ATSP-2K package
+
+17-07-2009
+
+
+----------------------------------------------------------------------
+
+Authors:
+
+O. Scharf, 
+Chimie quantique et Photophysique, 
+Universite Libre de Bruxelles, 
+B--1050 Bruxelles, Belgium
+
+A. Borgoo
+Algemene Chemie, 
+Vrije Universiteit Brussels, 
+B--1050 Brussels, Belgium
+
+G. Gaigalas
+Vilnius University Research Institute of Theoretical Physics and Astronomy,
+A. Gostauto 12,
+LT-01108 Vilnius, Lithuania
+
+M.R. Godefroid,
+Chimie quantique et Photophysique, 
+Universite Libre de Bruxelles, 
+B--1050 Bruxelles, Belgium
+mrgodef@ulb.ac.be
+
+----------------------------------------------------------------------
+
+Files:
+=======
+
+README
+Install_density
+
+src/
+        Makefile
+        blkdta000.f
+        cfgn1.f
+        cfgo1.f
+        density.f
+        qquadr.f
+        readwfn.f
+        readwt.f
+        savenon.f
+        setup.f
+        setupm.f
+        spin_angular_density.f
+        unitelement.f
+
+Test/
+        n3.c
+        n3.w
+        n3.l
+        n3.plt
+        n3.nw
+        n3.n
+        n3.matrix
+        n3.d
+
+----------------------------------------------------------------------
+
+Installation: 
+============== 
+To install, adjust the variables in the script file <Install_density>. The script 
+is based on bash shell. For different shell. The script sets the necesary variable and makes the
+density program as a new application of the atsp2k pachage.
+
+requirements:
+-------------
+density needs atsp2k libraries and lapack
+
+preparation:
+------------
+
+#extract the files from the .tar in a temporary directory
+mkdir density
+cd density
+tar -cvf density.tar
+#this creates (among others) the subdirectory /src, which contains the source files of density.
+
+#go to the atsp2k main directore and set the ATSP environment variable:
+cd /my_atsp2k/
+export ATSP=$( pwd )
+
+#the src files (supplied in /src directory of tar file) should be copied to the
+#correct location in the atsp2K directory structure:
+#a) make a new directory
+mkdir ${ATSP}/src/appl/density
+
+#b) copy the source files and the Makefile from the /src directory created by expanding the .tar file) e.g.
+# replace ${TEMPDIR} with the relevant directory e.g. /density/src 
+cp /density/src/* ${ATSP}/src/appl/density  
+
+#copy the Install_density script from /density/ to /my_atsp2k/
+cp /density/Install_density ${ATSP}
+
+#once the files in place the environment variables can be exported:
+export FC="pgf90"                          # Fortran compiler
+export FC_FLAGS="-mcmodel=medium -Msave -O3 -fastsse"
+                                           # compiler flags
+export FC_LD="-Bstatic"                    # Serial linker flags
+
+# the density program uses a lapack routine, so the compiler needs an extra flag
+export LAPACK_LIB="-lpthread -lacml"
+
+# setting the variables in ${ATSP}/src/density/Makefile
+EXED = ${ATSP}/bin           #sets the default binary directory of atsp2k
+LIBDIR = ${ATSP}/lib         #sets the default library directory of atsp2k
+EXEF = $(EXED)/density       #sets the binary to be built
+RCA = -lang -lcom            #sets flags for reference to atsp2k libraries
+ 
+building:
+---------
+#enter density directory
+cd ${ATSP}/src/appl/density
+
+# make the density program
+make $* 2>&1 | tee ${ATSP}/make.err
+grep "severe" ./make.err
+
+# return to atsp main directory
+cd ${ATSP}
+
+Testing:
+=========
+The directory Test has contains input and output files for a Be atom n=3 CAS-MCHF calculation.
+Note: take care with machine dependency of non formatted data files.

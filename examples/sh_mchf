@@ -1,0 +1,62 @@
+
+set -x
+parity=e
+grp=1
+LS1=1D
+LS2=1S
+LS3=3P
+
+#####
+
+for n in 4 5  6 # 7
+do
+   (cat \
+       ../files_c/${LS1}${parity}${grp}.$n.c \
+       ../files_c/${LS2}${parity}${grp}.$n.c \
+       ../files_c/${LS3}${parity}${grp}.$n.c \
+    > cfg.inp
+
+nonh
+
+   for z in 14 15 # 16 17 18 19 20 21 22
+   do
+      (echo $n;
+case $n in
+   3) ORB=all;   ITER=2000;;
+   4) ORB==7;    ITER=2000;;   
+   5) ORB==12;   ITER=2000;;
+   6) ORB==15;   ITER=1000;;
+   7) ORB==15;   ITER=1000;; 
+esac
+
+echo "Starting: Z::"${z}, "n::"$n, "ORB::"${ORB}, "ITER::"${ITER} 
+IC=0
+
+previous_n=`expr $n - 1`;
+cp -f ${parity}${grp}.${z}_${previous_n}.w wfn.inp;
+
+mchf << EOF  > mchf_out.$z_$n
+Z=${z},${z}
+1  # 1D
+1  # 1S
+1  # 3P
+${ORB}
+1s,2s,2p
+y
+n
+y
+n
+F,10E-9,10E-9
+n
+${ITER},${IC}
+y
+EOF
+      mv wfn.out ${parity}${grp}.${z}_${n}.w;
+      mv ${LS1}${parity}.l ${LS1}${parity}${grp}.${z}_${n}.l;
+      mv ${LS2}${parity}.l ${LS2}${parity}${grp}.${z}_${n}.l;
+      mv ${LS3}${parity}.l ${LS3}${parity}${grp}.${z}_${n}.l;
+      echo "finished" )
+    done)
+done
+
+

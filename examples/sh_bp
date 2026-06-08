@@ -1,0 +1,50 @@
+
+set -x
+parity=e
+grp=1
+n=6
+
+#  Generate the angular data.  Note this uses more disk than bpci.
+
+bp_ang >out <<EOF
+CI,y,y
+g
+2
+n
+1,1,1,0
+y
+EOF
+~
+
+   for z in 14 15 # 16 17 18 19 20 21 22
+   do
+      (echo $n;
+
+echo "Starting: Z::"${z} 
+
+cp -f ${parity}${grp}.${z}_${n}.w CI.w;
+
+bp_mat > out.${z}_${n}<< EOF 
+CI,y,y
+g
+y
+EOF
+
+bp_eiv >>out.${z}_${n}<< EOF
+CI,y,y
+g
+4,0
+1,2
+1
+1,2
+y
+0
+0
+0
+EOF
+
+		mv CI.j ${parity}${grp}.${z}_${n}.j;)
+done 
+
+
+
